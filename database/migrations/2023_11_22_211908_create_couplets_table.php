@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('couplets', function (Blueprint $table) {
             $table->id();
-            $table->integer('number_of_couplet');
-            $table->string('first_line');
-            $table->string('second_line');
-            $table->foreignId('poem_id')->constrained('poems');
+            $table->integer('number_of_couplet')->nullable();
+            $table->string('first_line')->nullable();
+            $table->string('second_line')->nullable();
+            $table->foreignId('poem_id')->nullable()->constrained('poems');
             $table->timestamps();
         });
     }

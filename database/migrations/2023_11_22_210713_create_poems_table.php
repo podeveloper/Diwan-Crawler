@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('poems', function (Blueprint $table) {
             $table->id();
-            $table->integer('number_of_poem');
-            $table->string('title');
-            $table->string('couplet_count');
-            $table->string('meter');
-            $table->foreignId('poet_id')->constrained('poets');
+            $table->integer('number_of_poem')->nullable();
+            $table->string('title')->nullable();
+            $table->string('couplet_count')->nullable();
+            $table->string('meter')->nullable();
+            $table->foreignId('poet_id')->nullable()->constrained('poets');
             $table->timestamps();
         });
     }
