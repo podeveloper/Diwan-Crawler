@@ -13,6 +13,7 @@ class Poet extends Model
         'full_name',
         'nom_de_plume',
         'aka',
+        'era',
         'nationality',
         'birth_year',
         'death_year',

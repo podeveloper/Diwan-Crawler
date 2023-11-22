@@ -29,6 +29,8 @@ class PoetResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('aka')
                     ->maxLength(255),
+                Forms\Components\TextInput::make('era')
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('nationality')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('birth_year')
@@ -54,6 +56,8 @@ class PoetResource extends Resource
                 Tables\Columns\TextColumn::make('nom_de_plume')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('aka')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('era')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('nationality')
                     ->searchable(),
