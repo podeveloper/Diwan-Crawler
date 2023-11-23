@@ -136,17 +136,23 @@ class ScrapDiwanCommand extends Command
             $poemRecordCrawler = new Crawler($poemRecord);
 
             $poemUrl = 'https://www.aldiwan.net/' . $poemRecordCrawler->filter('a.float-right')->attr('href');
-            $poemName = $poemRecordCrawler->filter('a.float-right')->text();
-
-            $type = $poemRecordCrawler->filter('.text-data a:nth-child(1)')->text();
-            $meter = $poemRecordCrawler->filter('.text-data a:nth-child(2)')->text();
-            $coupletCount = (int)$poemRecordCrawler->filter('.text-data a:nth-child(3)')->text();
-
+            $poemName = $poemRecordCrawler->filter('a.float-right')->first()->text();
             $this->info('Poem URL: ' . $poemUrl);
             $this->info('Poem Name: ' . $poemName);
-            $this->info('Type: ' . $type);
-            $this->info('Meter: ' . $meter);
-            $this->info('Couplet Count: ' . $coupletCount);
+
+            try {
+                $type = $poemRecordCrawler->filter('.text-data a:nth-child(1)')->first()->text();
+                $meter = $poemRecordCrawler->filter('.text-data a:nth-child(2)')->first()->text();
+                $coupletCount = (int)$poemRecordCrawler->filter('.text-data a:nth-child(3)')->first()->text();
+
+                $this->info('Type: ' . ($type ?? ''));
+                $this->info('Meter: ' . ($meter ?? ''));
+                $this->info('Couplet Count: ' . ($coupletCount ?? ''));
+            }catch (\Exception $e)
+            {
+                $type = null; $meter = null; $coupletCount = null;
+                $this->info('Failed : ' . $poemName);
+            }
 
             // Create or retrieve poet information
             $poem = Poem::firstOrCreate([
@@ -160,7 +166,7 @@ class ScrapDiwanCommand extends Command
             ]);
 
             // Now crawl and store couplets for the poem
-            $this->crawlPoemCouplets($poem);
+            //$this->crawlPoemCouplets($poem);
         }
     }
 
@@ -176,6 +182,7 @@ class ScrapDiwanCommand extends Command
             $firstLine = $h3Elements->eq($i)->text();
             $secondLine = $h3Elements->eq($i + 1)->text();
 
+            dd($firstLine,$secondLine);
             // Create a Couplet array
             $couplet = [
                 'number_of_couplet' => ($i / 2) + 1,
