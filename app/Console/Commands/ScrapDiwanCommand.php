@@ -166,37 +166,44 @@ class ScrapDiwanCommand extends Command
             ]);
 
             // Now crawl and store couplets for the poem
-            //$this->crawlPoemCouplets($poem);
+            $this->crawlPoemCouplets($poem);
         }
     }
 
     protected function crawlPoemCouplets($poem)
     {
+        // Replace $poem->url with the actual URL if needed
         $response = Http::get($poem->url);
-        $crawler = new Crawler($response->body());
+        $html = $response->body();
 
-        $h3Elements = $crawler->filter('.bet-1.row.pt-0.px-5.pb-4.justify-content-center #poem_content h3');
+        $crawler = new Crawler($html);
 
-        // Loop through h3 elements in pairs
-        for ($i = 0; $i < $h3Elements->count(); $i += 2) {
-            $firstLine = $h3Elements->eq($i)->text();
-            $secondLine = $h3Elements->eq($i + 1)->text();
+        // Find the div with id 'poem_content'
+        $poemDiv = $crawler->filter('#poem_content');
 
-            dd($firstLine,$secondLine);
+        // Extract text from each h3 tag within the poem_div
+        $poemLines = $poemDiv->filter('h3')->each(function (Crawler $node) {
+            return $node->text();
+        });
+
+        // Combine lines into couplets
+        $couplets = array_chunk($poemLines, 2);
+
+        // Loop through couplets
+        foreach ($couplets as $index => $couplet) {
+            $firstLine = isset($couplet[0]) ? $couplet[0] : null;
+            $secondLine = isset($couplet[1]) ? $couplet[1] : null;
+
             // Create a Couplet array
-            $couplet = [
-                'number_of_couplet' => ($i / 2) + 1,
+            $coupletData = [
+                'number_of_couplet' => $index + 1,
                 'first_line' => $firstLine,
                 'second_line' => $secondLine,
                 'poem_id' => $poem->id,
             ];
 
-            dd($couplet);
-
             // Insert the Couplet into the database
-            Couplet::create($couplet);
+            Couplet::create($coupletData);
         }
-
-        return $poem;
     }
 }
