@@ -38,6 +38,11 @@ class CoupletResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('poem.poet.era')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label('Era'),
                 Tables\Columns\TextColumn::make('poem.meter')
                     ->searchable()
                     ->sortable()
