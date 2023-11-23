@@ -29,9 +29,13 @@ class PoemResource extends Resource
                     ->numeric(),
                 Forms\Components\TextInput::make('title')
                     ->maxLength(255),
+                Forms\Components\TextInput::make('type')
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('couplet_count')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('meter')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('url')
                     ->maxLength(255),
             ]);
     }
@@ -48,9 +52,13 @@ class PoemResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('couplet_count')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('meter')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('url')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
