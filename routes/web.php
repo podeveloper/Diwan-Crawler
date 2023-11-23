@@ -14,7 +14,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    if (auth()->user())
+    {
+        return redirect('/admin');
+    }
+
+    return redirect()->to('/admin/login');
 });
 
 \Livewire\Livewire::setScriptRoute(function ($handle) {
