@@ -38,24 +38,41 @@ class CoupletResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('poem_id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('poem.meter')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label('Meter'),
+                Tables\Columns\TextColumn::make('poem.type')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable()
+                    ->label('Type'),
+                Tables\Columns\TextColumn::make('second_line')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('first_line')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('number_of_couplet')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('first_line')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('second_line')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                Tables\Columns\TextColumn::make('poem.couplet_count')
+                    ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->toggleable()
+                    ->label('Couplet Count'),
+                Tables\Columns\TextColumn::make('poem.title')
+                    ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable()
+                    ->label('Title'),
+                Tables\Columns\TextColumn::make('poem.number_of_poem')
+                    ->sortable()
+                    ->toggleable()
+                    ->label('Poem No'),
+                Tables\Columns\TextColumn::make('poem.poet.full_name')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 //
