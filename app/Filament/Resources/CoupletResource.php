@@ -78,4 +78,9 @@ class CoupletResource extends Resource
             'index' => Pages\ManageCouplets::route('/'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return Couplet::count();
+    }
 }

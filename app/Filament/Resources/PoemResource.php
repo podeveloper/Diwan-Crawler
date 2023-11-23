@@ -82,4 +82,9 @@ class PoemResource extends Resource
             'index' => Pages\ManagePoems::route('/'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return Poem::count();
+    }
 }
