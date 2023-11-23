@@ -130,42 +130,66 @@ class ScrapDiwanCommand extends Command
         $response = Http::get($poetUrl);
         $poetCrawler = new Crawler($response->body());
 
-        $poemLinks = $poetCrawler->filter('.content .record .col-sm-12.col-md a');
+        $poemRecords = $poetCrawler->filter('.content .record.col-12');
 
-        $poemUrls = [];
-        foreach ($poemLinks as $poemLink) {
-            $poemLinkCrawler = new Crawler($poemLink);
-            $poemUrl = 'https://www.aldiwan.net/' . $poemLinkCrawler->attr('href');
-            $poemUrls[] = $poemUrl;
-        }
+        foreach ($poemRecords as $poemKey => $poemRecord) {
+            $poemRecordCrawler = new Crawler($poemRecord);
 
-        foreach ($poemUrls as $poemUrl)
-        {
-            $poem = $this->crawlPoemCouplets($poemUrl, $poet);
+            $poemUrl = 'https://www.aldiwan.net/' . $poemRecordCrawler->filter('a.float-right')->attr('href');
+            $poemName = $poemRecordCrawler->filter('a.float-right')->text();
+
+            $type = $poemRecordCrawler->filter('.text-data a:nth-child(1)')->text();
+            $meter = $poemRecordCrawler->filter('.text-data a:nth-child(2)')->text();
+            $coupletCount = (int)$poemRecordCrawler->filter('.text-data a:nth-child(3)')->text();
+
+            $this->info('Poem URL: ' . $poemUrl);
+            $this->info('Poem Name: ' . $poemName);
+            $this->info('Type: ' . $type);
+            $this->info('Meter: ' . $meter);
+            $this->info('Couplet Count: ' . $coupletCount);
+
+            // Create or retrieve poet information
+            $poem = Poem::firstOrCreate([
+                'number_of_poem' => $poemKey+1,
+                'title' => $poemName,
+                'type' => $type,
+                'couplet_count' => $coupletCount,
+                'meter' => $meter,
+                'url' => $poemUrl,
+                'poet_id' => $poet->id,
+            ]);
+
+            // Now crawl and store couplets for the poem
+            $this->crawlPoemCouplets($poem);
         }
     }
 
-    protected function crawlPoemCouplets($poemUrl, $poet)
+    protected function crawlPoemCouplets($poem)
     {
-        dd($poemUrl);
-        $response = Http::get($poemUrl);
+        $response = Http::get($poem->url);
         $crawler = new Crawler($response->body());
 
-        // Check if the nodes exist before trying to extract text
-        $poemTitleNode = $crawler->filter('.content .record .col-sm-12.col-md a');
+        $h3Elements = $crawler->filter('.bet-1.row.pt-0.px-5.pb-4.justify-content-center #poem_content h3');
 
-        // Extract other relevant information about the poem...
+        // Loop through h3 elements in pairs
+        for ($i = 0; $i < $h3Elements->count(); $i += 2) {
+            $firstLine = $h3Elements->eq($i)->text();
+            $secondLine = $h3Elements->eq($i + 1)->text();
 
-        $poemTitle = $poemTitleNode->text();
+            // Create a Couplet array
+            $couplet = [
+                'number_of_couplet' => ($i / 2) + 1,
+                'first_line' => $firstLine,
+                'second_line' => $secondLine,
+                'poem_id' => $poem->id,
+            ];
 
-        $this->info('Poem Title: ' . $poemTitle);
+            dd($couplet);
 
-        // Create or retrieve poem information
-        $poem = Poem::firstOrCreate([
-            'title' => $poemTitle,
-            'poet_id' => $poet->id,
-        ]);
+            // Insert the Couplet into the database
+            Couplet::create($couplet);
+        }
 
-        // Now crawl and store couplets...
+        return $poem;
     }
 }
