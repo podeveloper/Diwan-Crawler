@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->integer('number_of_poem')->nullable();
             $table->string('title')->nullable();
+            $table->string('type')->nullable();
             $table->string('couplet_count')->nullable();
             $table->string('meter')->nullable();
+            $table->string('url')->nullable();
             $table->foreignId('poet_id')->nullable()->constrained('poets');
             $table->timestamps();
         });

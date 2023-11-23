@@ -23,15 +23,23 @@ class PoemResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('poet_id')
-                    ->numeric(),
+                Forms\Components\Select::make('poet_id')
+                    ->relationship('poet', 'full_name')
+                    ->searchable()
+                    ->preload()
+                    ->nullable()
+                    ->exists('poets','id'),
                 Forms\Components\TextInput::make('number_of_poem')
                     ->numeric(),
                 Forms\Components\TextInput::make('title')
                     ->maxLength(255),
+                Forms\Components\TextInput::make('type')
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('couplet_count')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('meter')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('url')
                     ->maxLength(255),
             ]);
     }
@@ -40,17 +48,28 @@ class PoemResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('poet_id')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('number_of_poem')
                     ->numeric()
+                    ->toggleable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('title')
+                    ->toggleable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('type')
+                    ->toggleable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('poet.full_name')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('couplet_count')
+                    ->toggleable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('meter')
+                    ->toggleable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('url')
+                    ->toggleable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

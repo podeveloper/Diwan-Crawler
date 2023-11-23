@@ -9,7 +9,7 @@ class Poem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['number_of_poem', 'title', 'couplet_count', 'meter', 'poet_id'];
+    protected $fillable = ['number_of_poem', 'title', 'type', 'couplet_count', 'meter', 'url', 'poet_id'];
 
     public function poet()
     {
