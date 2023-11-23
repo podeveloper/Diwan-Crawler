@@ -99,4 +99,9 @@ class PoetResource extends Resource
             'index' => Pages\ManagePoets::route('/'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return Poet::count();
+    }
 }
